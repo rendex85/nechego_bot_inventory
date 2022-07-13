@@ -22,6 +22,7 @@ from rest_framework_swagger.views import get_swagger_view
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^', include('market.urls')),
+    url(r'^', include('inventory.urls')),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
     path('auth/', include('djoser.urls.jwt')),
