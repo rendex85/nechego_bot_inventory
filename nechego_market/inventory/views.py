@@ -1,16 +1,17 @@
 # Create your views here.
-from rest_framework import generics, status
+from rest_framework import generics
 from rest_framework.response import Response
 
-from inventory.models import UserItem, ConferenceUser
+from inventory.models import UserItem
+from inventory.remove_add_item import inventory_change
 from inventory.serializer import CreateUserItemSerializer
+from market.models import Item
 
 
 class CreateUserItem(generics.CreateAPIView):
     """
-    View для получения и отправки комментариев
-    Комментарии можно получить или отправить, указав в адресе id экспертизы,
-    При желании можно в параметрах указать блок комментариев для GET-запроса
+    Добавление/покупка айтема
+    поле stock в возвращаемых параметрах показывает актуальное количество предметов у пользователя
     """
     queryset = UserItem.objects.all()
     serializer_class = CreateUserItemSerializer
@@ -18,16 +19,33 @@ class CreateUserItem(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         uid = request.data["uid"]
         item = request.data["item"]
-        try:
-            user = ConferenceUser.objects.get(uid=uid)
-        except ConferenceUser.DoesNotExist:
-            user = ConferenceUser.objects.create(uid=uid)
-        #TODO: здесь должена быть проверка, есть ли переданный айтем в стоке или нет
-        try:
-            invent_object = UserItem.objects.get(user=user, item_id=item)
-            invent_object.stock += 1
-            invent_object.save()
-        except UserItem.DoesNotExist:
-            invent_object = UserItem.objects.create(user=user, item_id=item)
+        stock = request.data["stock"]
+        item_object = Item.objects.get(id=item)
+        if item_object.actual_stock_today < stock:
+            return Response(status=404,
+                            data={"message": "Данного предмета нет в таком количестве."})
+        else:
+            item_object.actual_stock_today -= stock
+            item_object.save()
+        message, response_status = inventory_change(uid, item, stock, "add")
 
-        return Response(status=status.HTTP_200_OK, data={"message": f"Предмет {item} успешно добавлен в инвентарь {uid}"})
+        return Response(status=response_status,
+                        data=message)
+
+
+class UseUserItem(generics.CreateAPIView):
+    """
+    Использование айтема
+    поле stock в возвращаемых параметрах показывает актуальное количество предметов у пользователя
+    """
+    queryset = UserItem.objects.all()
+    serializer_class = CreateUserItemSerializer
+
+    def create(self, request, *args, **kwargs):
+        uid = request.data["uid"]
+        item = request.data["item"]
+        stock = request.data["stock"]
+        message, response_status = inventory_change(uid, item, stock, "remove")
+
+        return Response(status=response_status,
+                        data=message)
