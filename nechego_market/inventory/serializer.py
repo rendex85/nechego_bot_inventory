@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.fields import IntegerField
 
 from inventory.models import ConferenceUser
-from market.serializer import ItemBaseSerializer
+from market.serializer import ItemBaseSerializer, ItemSmallSerializer
 
 
 class ConferenceUserSerializer(serializers.ModelSerializer):
@@ -23,3 +23,10 @@ class UseUserItemSerializer(serializers.Serializer):
     stock = IntegerField(write_only=True)
     item_object = ItemBaseSerializer(many=False)
 
+
+class UserItemSerializer(serializers.Serializer):
+    item = ItemSmallSerializer(many=False)
+
+    class Meta:
+        model = ConferenceUser
+        fields = "__all__"

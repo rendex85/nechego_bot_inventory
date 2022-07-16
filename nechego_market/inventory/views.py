@@ -10,6 +10,15 @@ from market.models import Item
 from market.serializer import ItemBaseSerializer
 
 
+class InventoryList(generics.ListAPIView):
+    queryset = UserItem.objects.all()
+    serializer_class = CreateUserItemSerializer
+
+    def get_queryset(self):
+        items_group = UserItem.objects.filter(user_id=self.request.resolver_match.kwargs['user_id'], stock__gt=0)
+        return items_group
+
+
 class CreateUserItem(generics.CreateAPIView):
     """
     Добавление/покупка айтема

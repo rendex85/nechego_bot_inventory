@@ -1,6 +1,8 @@
 from typing import Tuple
 
 from inventory.models import ConferenceUser, UserItem
+from market.models import Item
+from market.serializer import ItemSmallSerializer
 
 
 def inventory_change(uid: int, item_id: int, stock: int, add_remove_flag: str) -> Tuple[dict, int]:
@@ -26,8 +28,8 @@ def inventory_change(uid: int, item_id: int, stock: int, add_remove_flag: str) -
         if add_remove_flag == "remove":
             return {"message": "Такого предмета нет"}, 404
         invent_object = UserItem.objects.create(user=user, item_id=item_id, stock=stock)
-
+    item = Item.objects.get(id=item_id)
     return {
-               "uid": uid,
-               "item": item_id,
+               "user_id": uid,
+               "item": ItemSmallSerializer(item).data,
                "stock": invent_object.stock}, 201
