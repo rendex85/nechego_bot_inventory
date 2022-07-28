@@ -1,9 +1,10 @@
 from django.urls import path
 
-from inventory.views import CreateUserItem, InventoryList
+from inventory.views import  InventoryList, InventoryRetrieve
 
 urlpatterns = [
     path('inventory/<int:user_id>', InventoryList.as_view()),
+    path('inventory/<int:user_id>/<int:item_id>', InventoryRetrieve.as_view())
 
 
 ]

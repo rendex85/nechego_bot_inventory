@@ -11,8 +11,13 @@ class ConferenceUser(models.Model):
         return str(self.uid)
 
 
+class ConferenceUserStatus(models.Model):
+    user = models.ForeignKey(ConferenceUser, blank=True, null=True, on_delete=models.CASCADE)
+    status = models.ForeignKey('market.StatusItem', blank=True, null=True, unique=True, on_delete=models.CASCADE)
+    time_limit = models.DateTimeField(blank=True, null=True)
+
+
 class UserItem(models.Model):
     user = models.ForeignKey(ConferenceUser, on_delete=models.CASCADE, blank=True, null=True)
     item = models.ForeignKey("market.Item", on_delete=models.CASCADE)
     stock = models.IntegerField(blank=True, null=True, default=1)
-

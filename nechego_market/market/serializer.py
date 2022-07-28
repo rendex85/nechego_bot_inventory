@@ -1,17 +1,25 @@
 from rest_framework import serializers
 from rest_framework.fields import CharField, IntegerField
 
-from market.models import Item, Weapon, ItemInGroup
+from market.models import Item, Weapon, ItemInGroup, EffectItem, StatusItem
 
 
-class WeaponSerializer(serializers.ModelSerializer):
+class StatusSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Weapon
-        fields = ["id", "damage"]
+        model = StatusItem
+        fields = "__all__"
+
+
+class EffectSerializer(serializers.ModelSerializer):
+    status = StatusSerializer(many=False)
+
+    class Meta:
+        model = EffectItem
+        fields = "__all__"
 
 
 class ItemBaseSerializer(serializers.ModelSerializer):
-    weapon = WeaponSerializer(many=False, required=False)
+    effect = EffectSerializer(many=True)
 
     class Meta:
         model = Item
@@ -24,6 +32,14 @@ class ItemSmallSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
         fields = ["id", "name", "smile"]
+
+
+class ItemInfoSerializer(serializers.ModelSerializer):
+    effect = EffectSerializer(many=True)
+
+    class Meta:
+        model = Item
+        fields = ["id", "name", "effect", "description", "smile", "type_flag"]
 
 
 class ItemInGroupSerializer(serializers.ModelSerializer):
@@ -42,5 +58,5 @@ class BuyItem(serializers.Serializer):
 
 class ResponseBuyItem(BuyItem):
     user_id = IntegerField()
-    stock = IntegerField(required=False)
+    stock_in_inventory = IntegerField(required=False)
     item = ItemSmallSerializer(many=False)

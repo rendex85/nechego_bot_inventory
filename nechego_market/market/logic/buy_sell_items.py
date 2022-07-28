@@ -4,7 +4,7 @@ from inventory.remove_add_item import inventory_change
 from market.logic.create_data import create_group_or_filter
 
 
-def buy_item(uid: int, group_id: int, item_id: int, stock: Union[int, None]) -> Tuple[dict, int]:
+def buy_item(uid: int, group_id: int, item_id: int, stock: Union[int, None], flag:str) -> Tuple[dict, int]:
     item_group_object = create_group_or_filter(group_id=group_id).filter(item_id=item_id)
 
     if not stock:
@@ -19,4 +19,4 @@ def buy_item(uid: int, group_id: int, item_id: int, stock: Union[int, None]) -> 
     else:
         item_group.actual_stock_today -= stock
         item_group.save()
-        return inventory_change(uid, item_id, stock, "add")
+        return inventory_change(uid, item_id, stock, flag)
