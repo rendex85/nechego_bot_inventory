@@ -96,7 +96,7 @@ class Item(models.Model):
     smile = models.CharField(max_length=1024, blank=True, null=True)
     description = models.TextField()
 
-    effect = models.ManyToManyField(EffectItem, related_name="item_on_effect")
+    effect = models.ManyToManyField(EffectItem, related_name="item_on_effect", blank=True, null=True)
 
     def __str__(self):
         return self.name
