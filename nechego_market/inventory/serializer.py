@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from rest_framework.fields import IntegerField
+from rest_framework.fields import IntegerField, CharField
 
-from inventory.models import ConferenceUser, UserItem
-from market.serializer import ItemBaseSerializer, ItemSmallSerializer, ItemInfoSerializer
+from inventory.models import ConferenceUser, UserItem, ConferenceUserStatus
+from market.serializer import ItemSmallSerializer, ItemInfoSerializer, EffectSerializer, StatusSerializer
 
 
 class ConferenceUserSerializer(serializers.ModelSerializer):
@@ -11,17 +11,22 @@ class ConferenceUserSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class ConferenceUserStatusSerializer(serializers.ModelSerializer):
+    status = StatusSerializer(many=False)
+
+    class Meta:
+        model = ConferenceUserStatus
+        fields = "__all__"
+
+
 class CreateUserItemSerializer(serializers.Serializer):
-    uid = IntegerField(write_only=True)
-    item = IntegerField(write_only=True)
-    stock = IntegerField(write_only=True)
+    action = CharField(write_only=True)
 
 
 class UseUserItemSerializer(serializers.Serializer):
-    uid = IntegerField(write_only=True)
-    item = IntegerField(write_only=True)
-    stock = IntegerField(write_only=True)
-    item_object = ItemBaseSerializer(many=False)
+    user_id = IntegerField()
+    stock_in_inventory = IntegerField(required=False)
+    effect = EffectSerializer(many=True)
 
 
 class UserItemSerializer(serializers.ModelSerializer):

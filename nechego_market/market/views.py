@@ -6,13 +6,13 @@ from rest_framework.response import Response
 
 from inventory.models import UserItem
 from market.logic.buy_sell_items import buy_item
-from market.logic.create_data import create_group_or_filter
+from market.logic.check_data import create_group_or_filter, PrepareData
 from market.logic.generate_item_list import generate_items
 from market.models import ItemInGroup
 from market.serializer import ItemInGroupSerializer, BuyItem, ResponseBuyItem
 
 
-class ItemInGroupListView(generics.ListAPIView):
+class ItemInGroupListView(PrepareData, generics.ListAPIView):
     """Возвращает список предметов, доступных для покупки в конференции на сегодня"""
     queryset = ItemInGroup.objects.all()
     serializer_class = ItemInGroupSerializer
@@ -20,10 +20,11 @@ class ItemInGroupListView(generics.ListAPIView):
     def get_queryset(self):
         generate_items()
         items_group = create_group_or_filter(self.request.resolver_match.kwargs['group_id'])
+        super().get_queryset()
         return items_group.order_by("id")
 
 
-class CreateUserItem(generics.CreateAPIView):
+class CreateUserItem(PrepareData, generics.CreateAPIView):
     """
     Покупка предмета.
 

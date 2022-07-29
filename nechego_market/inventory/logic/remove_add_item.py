@@ -20,7 +20,7 @@ def remove_item(user: ConferenceUser, item_id: int, stock: int):
             return {
                        "user_id": user.uid,
                        "item": ItemSmallSerializer(invent_object.item).data,
-                       "stock": invent_object.stock}, 201
+                       "stock_in_inventory": invent_object.stock}, 201
     except UserItem.DoesNotExist:
         return {"message": "Такого предмета нет"}, 404
 
@@ -35,7 +35,7 @@ def add_item(user: ConferenceUser, item_id: int, stock: int) -> Tuple[dict, int]
     return {
                "user_id": user.uid,
                "item": ItemSmallSerializer(invent_object.item).data,
-               "stock": invent_object.stock}, 201
+               "stock_in_inventory": invent_object.stock}, 201
 
 
 def use_item(user: ConferenceUser, item_id: int) -> EffectItem:

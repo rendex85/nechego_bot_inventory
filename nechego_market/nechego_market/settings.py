@@ -108,6 +108,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+STATIC_URL = '/static-backend/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static-backend')
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/

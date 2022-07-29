@@ -1,7 +1,7 @@
 from typing import Tuple, Union
 
-from inventory.remove_add_item import inventory_change
-from market.logic.create_data import create_group_or_filter
+from inventory.logic.remove_add_item import inventory_change
+from market.logic.check_data import create_group_or_filter
 
 
 def buy_item(uid: int, group_id: int, item_id: int, stock: Union[int, None], flag:str) -> Tuple[dict, int]:
